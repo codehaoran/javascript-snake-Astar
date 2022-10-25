@@ -39,7 +39,8 @@ class Snake {
   }
 }
 class Apple {
-  constructor() {
+  constructor(oldX,oldY) {
+    this.old = {x: oldX, y:oldY}
     let isTouching
     while (true) {
       isTouching = false
@@ -81,8 +82,9 @@ function eatApple() {
     snake.tail[snake.tail.length - 1].y === apple.y
   ) {
     snake.tail[snake.tail.length] = { x: apple.x, y: apple.y }
-    apple = new Apple()
-    console.log(111);
+    apple = new Apple(apple.x, apple.y)
+    // console.log(apple.x,apple.y);
+    // console.log(apple.old.x, apple.old.y);
   }
 }
 
@@ -90,6 +92,7 @@ function update() {
   snake.move()
   eatApple()
   checkHitWall()
+  checkBody()
 }
 
 function draw() {
@@ -116,14 +119,24 @@ function createRect(x, y, w, h, color) {
 
 function checkHitWall() {
   const head = snake.tail[snake.tail.length - 1]
-  if (head.x === -snake.size) {
+  if (head.x <= -snake.size) {
     head.x = canvas.width
-  } else if (head.x === canvas.width + snake.size) {
+  } else if (head.x >= canvas.width + snake.size) {
     head.x = 0
-  } else if (head.y === -snake.size) {
+  } else if (head.y <= -snake.size) {
     head.y = canvas.height
-  } else if (head.y === canvas.height + snake.size) {
+  } else if (head.y >= canvas.height + snake.size) {
     head.y = 0
+  }
+}
+
+function checkBody() {
+  const head_ = snake.tail[snake.tail.length - 1]
+  for (let i = 0; i < snake.tail.length-1; i++) {
+    const tail = snake.tail[i];
+    if (head_.x === tail.x && head_.y === tail.y && head_.x !== apple.old.x && head_.y !== apple.old.y) {
+      console.log('gameOver');
+    }
   }
 }
 
